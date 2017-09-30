@@ -18,7 +18,7 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember try:each"
+    "test": "ember test && ember test --environment=production"
   },
   "dependencies": {
     "ember-cli-babel": "^6.8.2"
