@@ -3,14 +3,13 @@ import { test, module } from 'qunit';
 import { DEBUG } from '@glimmer/env';
 import catchGenerator, { squelchCatchHandlerFor, unsquelchAllCatchHandlers } from 'ember-test-friendly-catch-handler';
 
-module('ember-test-friendly-catch-handler', function(hooks) {
-
-  hooks.afterEach(() => {
-    unsquelchAllCatchHandlers();
-  });
-
-  module('in debug', function() {
+module('ember-test-friendly-catch-handler', function() {
+  module('in debug', function(hooks) {
     if (!DEBUG) { return; }
+
+    hooks.afterEach(() => {
+      unsquelchAllCatchHandlers();
+    });
 
     test('it calls the provided callback and rethrows the rejection', function(assert) {
       assert.expect(2);
