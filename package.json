@@ -1,12 +1,15 @@
 {
   "name": "ember-test-friendly-catch-handler",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Build testable catch handlers that don't throw in production...",
   "keywords": [
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "contributors": [
+    "Robert Jackson <me@rwjblue.com>",
+    "David J. Hamilton <davidjh@hjdivad.com>"
+  ],
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -18,7 +21,7 @@
     "test": "ember try:each"
   },
   "dependencies": {
-    "ember-cli-babel": "^6.3.0"
+    "ember-cli-babel": "^6.8.2"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
