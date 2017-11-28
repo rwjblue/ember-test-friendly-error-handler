@@ -20,7 +20,7 @@ if (DEBUG) {
 }
 
 export default function(label, callback) {
-  assert('ember-test-friendly-catch-handler requires a label', label);
+  assert('ember-test-friendly-error-handler requires a label', label);
   if (!DEBUG) { return callback; }
 
   return function(reason) {

@@ -1,9 +1,9 @@
 import { Promise } from 'rsvp';
 import { test, module } from 'qunit';
 import { DEBUG } from '@glimmer/env';
-import catchGenerator, { squelchCatchHandlerFor, unsquelchAllCatchHandlers } from 'ember-test-friendly-catch-handler';
+import catchGenerator, { squelchCatchHandlerFor, unsquelchAllCatchHandlers } from 'ember-test-friendly-error-handler';
 
-module('ember-test-friendly-catch-handler', function() {
+module('ember-test-friendly-error-handler', function() {
   module('in debug', function(hooks) {
     if (!DEBUG) { return; }
 
