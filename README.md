@@ -10,6 +10,41 @@ In production, you often want to catch certain types of errors such as network e
 
 In your application code you would import the error handler generator, and invoke it with a descriptive label and your callback.
 
+### Ember.onerror
+
+`Ember.onerror` is a hook that is invoked when an error is thrown by any code
+within the Ember run loop (e.g. `{{action`'s, component event methods, model
+hooks, etc). In practice, this is nearly all of your application code.
+`Ember.onerror` has the ability to "swallow" errors by handling them without
+rethrowing, and ultimately making the failure scenario impossible to detect
+while testing.
+
+It is common for applications to leverage `Ember.onerror` to do error reporting
+and attempt to gracefully handle errors thrown within the application, and when
+possible prevent those errors from bubbling out and causing issues with the
+running application (or providing more detailed information when they do impact
+the app).
+
+Without something like `ember-test-friendly-error-handler`, applications that
+implement `Ember.onerror` either have to replicate this addons behavior, or are
+unable to properly test both the "production" (aka error swallowing) and
+development/testing (aka re-throw errors to make them possible to track down
+and fix).
+
+Here is how an application might set this up:
+
+```js
+// app/app.js
+import Ember from 'ember';
+import buildErrorHandler from 'ember-test-friendly-error-handler';
+
+Ember.onerror = buildErrorHandler('Ember.onerror', (reason) => {
+  reportErrorToService(reason);
+  // whatever else you might want here...
+});
+// ...existing `app/app.js` content goes here...
+```
+
 ### Promises
 
 To generate a promise rejection handler (aka `.catch` handler) you might do something like:
