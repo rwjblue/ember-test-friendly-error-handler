@@ -2,5 +2,5 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-test-friendly-catch-handler'
+  name: 'ember-test-friendly-error-handler'
 };

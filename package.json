@@ -1,7 +1,7 @@
 {
-  "name": "ember-test-friendly-catch-handler",
+  "name": "ember-test-friendly-error-handler",
   "version": "1.0.0",
-  "description": "Build testable catch handlers that don't throw in production...",
+  "description": "Build testable error handlers that don't throw in production...",
   "keywords": [
     "ember-addon"
   ],
