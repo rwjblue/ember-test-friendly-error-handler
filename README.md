@@ -13,7 +13,7 @@ In your application code you would import the error handler generator, and invok
 ### Ember.onerror
 
 `Ember.onerror` is a hook that is invoked when an error is thrown by any code
-within the Ember run loop (e.g. `{{action`'s, component event methods, model
+within the Ember run loop (e.g. `{{action}}`'s, component event methods, model
 hooks, etc). In practice, this is nearly all of your application code.
 `Ember.onerror` has the ability to "swallow" errors by handling them without
 rethrowing, and ultimately making the failure scenario impossible to detect
@@ -26,9 +26,9 @@ running application (or providing more detailed information when they do impact
 the app).
 
 Without something like `ember-test-friendly-error-handler`, applications that
-implement `Ember.onerror` either have to replicate this addons behavior, or are
-unable to properly test both the "production" (aka error swallowing) and
-development/testing (aka re-throw errors to make them possible to track down
+implement `Ember.onerror` either have to replicate this addon's behavior, or are
+unable to properly test both the "production" mode (eg error swallowing) and
+development/testing mode (eg re-throw errors to make them possible to track down
 and fix).
 
 Here is how an application might set this up:
