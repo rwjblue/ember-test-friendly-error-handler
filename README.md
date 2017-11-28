@@ -8,14 +8,21 @@ In production, you often want to catch certain types of errors such as network e
 
 ## Usage
 
-In your application code you would import the catch generator, and invoke it with a descriptive label and your callback.
+In your application code you would import the error handler generator, and invoke it with a descriptive label and your callback.
+
+### Promises
+
+To generate a promise rejection handler (aka `.catch` handler) you might do something like:
+
 ```js
-import catchGenerator from 'ember-test-friendly-error-handler';
+import buildErrorHandler from 'ember-test-friendly-error-handler';
 
 // ... snip ...
 myModel.save()
-  .catch(catchGenerator('save-my-model', () => this.showNetworkFailureMessage()));
+  .catch(buildErrorHandler('save-my-model', () => this.showNetworkFailureMessage()));
 ```
+
+### Testing
 
 When you need to test the generic handler behavior (`this.showNetworkFailureMessage()` above), you need to disable the automatic error re-throwing behavior that `ember-test-friendly-error-handler` provides you so that your test more closely resembles your production environment.
 
@@ -24,18 +31,18 @@ A test that does this might look like:
 ```js
 import { module, test } from 'qunit';
 import { 
-  squelchCatchHandlerFor,
-  unsquelchAllCatchHandlers
+  squelchErrorHandlerFor,
+  unsquelchAllErrorHandlers
 } from 'ember-test-friendly-error-handler';
 
 module('some good description', {
   afterEach() {
-    unsquelchAllCatchHandlers(); 
+    unsquelchAllErrorHandlers();
   }
 });
 
 test('network failure message is displayed', function(assert) {
-  squelchCatchHandlerFor('save-my-model');
+  squelchErrorHandlerFor('save-my-model');
 
   triggerNetworkFailure();         // ⚡️
   return triggerModelSave()
@@ -53,8 +60,8 @@ The following interface describes the `ember-test-friendly-error-handler` module
 export default function(label: string, callback: Function): Function;
 
 // the following are only present when testing
-export function squelchCatchHandlerFor(label: string): void;
-export function unsquelchAllCatchHandlers(): void;
+export function squelchErrorHandlerFor(label: string): void;
+export function unsquelchAllErrorHandlers(): void;
 ```
 
 ## Contributing
