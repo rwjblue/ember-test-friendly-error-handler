@@ -1,14 +1,14 @@
 import { Promise } from 'rsvp';
 import { test, module } from 'qunit';
 import { DEBUG } from '@glimmer/env';
-import catchGenerator, { squelchCatchHandlerFor, unsquelchAllCatchHandlers } from 'ember-test-friendly-error-handler';
+import buildErrorHandler, { squelchErrorHandlerFor, unsquelchAllErrorHandlers } from 'ember-test-friendly-error-handler';
 
 module('ember-test-friendly-error-handler', function() {
   module('in debug', function(hooks) {
     if (!DEBUG) { return; }
 
     hooks.afterEach(() => {
-      unsquelchAllCatchHandlers();
+      unsquelchAllErrorHandlers();
     });
 
     test('it calls the provided callback and rethrows the rejection', function(assert) {
@@ -20,7 +20,7 @@ module('ember-test-friendly-error-handler', function() {
       }
 
       return Promise.reject(rejectionReason)
-        .catch(catchGenerator('label-here', handler))
+        .catch(buildErrorHandler('label-here', handler))
         .then(() => { assert.notOk(true, 'should have rejected'); })
         .catch(reason => {
           assert.equal(reason, rejectionReason, 'expected rejection reason was thrown');
@@ -28,13 +28,13 @@ module('ember-test-friendly-error-handler', function() {
     });
 
     test('requires label', function(assert) {
-      assert.throws(() => catchGenerator(null, () => {}), /requires a label/);
+      assert.throws(() => buildErrorHandler(null, () => {}), /requires a label/);
     });
 
-    test('squelchCatchHandlerFor allows testing without rethrowing', function(assert) {
+    test('squelchErrorHandlerFor allows testing without rethrowing', function(assert) {
       assert.expect(2);
 
-      squelchCatchHandlerFor('some-label-here');
+      squelchErrorHandlerFor('some-label-here');
 
       let rejectionReason = {};
       function handler(reason) {
@@ -42,15 +42,15 @@ module('ember-test-friendly-error-handler', function() {
       }
 
       return Promise.reject(rejectionReason)
-        .catch(catchGenerator('some-label-here', handler))
+        .catch(buildErrorHandler('some-label-here', handler))
         .then(() => { assert.ok(true, 'does not reject'); });
     });
 
     test('squelched handlers can be cleared', function(assert) {
       assert.expect(2);
 
-      squelchCatchHandlerFor('some-label-here');
-      unsquelchAllCatchHandlers();
+      squelchErrorHandlerFor('some-label-here');
+      unsquelchAllErrorHandlers();
 
       let rejectionReason = {};
       function handler(reason) {
@@ -58,7 +58,7 @@ module('ember-test-friendly-error-handler', function() {
       }
 
       return Promise.reject(rejectionReason)
-        .catch(catchGenerator('some-label-here', handler))
+        .catch(buildErrorHandler('some-label-here', handler))
         .then(() => { assert.notOk(true, 'should have rejected'); })
         .catch(reason => {
           assert.equal(reason, rejectionReason, 'expected rejection reason was thrown');
@@ -75,7 +75,7 @@ module('ember-test-friendly-error-handler', function() {
         assert.equal(reason, rejectionReason, 'expected rejection reason was passed to callback');
       }
 
-      return Promise.reject(rejectionReason).catch(catchGenerator('some-thing', handler));
+      return Promise.reject(rejectionReason).catch(buildErrorHandler('some-thing', handler));
     });
 
     test('handler can decide to throw (who knows why)', function(assert) {
@@ -85,7 +85,7 @@ module('ember-test-friendly-error-handler', function() {
       }
 
       return Promise.reject('derp')
-        .catch(catchGenerator('lol', handler))
+        .catch(buildErrorHandler('lol', handler))
         .catch((reason) => {
           assert.equal(reason, rejectionReason, 'expected rejection reason was thrown');
         })

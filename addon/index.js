@@ -4,17 +4,17 @@ import { DEBUG } from '@glimmer/env';
 
 let squelchedLabels;
 
-export let squelchCatchHandlerFor = null;
-export let unsquelchAllCatchHandlers = null;
+export let squelchErrorHandlerFor = null;
+export let unsquelchAllErrorHandlers = null;
 
 if (DEBUG) {
   squelchedLabels = Object.create(null);
 
-  squelchCatchHandlerFor = function squelchCatchHandlerFor(label) {
+  squelchErrorHandlerFor = function squelchErrorHandlerFor(label) {
     squelchedLabels[label] = true;
   };
 
-  unsquelchAllCatchHandlers = function unsquelchAllCatchHandlers() {
+  unsquelchAllErrorHandlers = function unsquelchAllErrorHandlers() {
     squelchedLabels = Object.create(null);
   };
 }
