@@ -1,6 +1,6 @@
 {
   "name": "ember-test-friendly-error-handler",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Build testable error handlers that don't throw in production...",
   "keywords": [
     "ember-addon"
