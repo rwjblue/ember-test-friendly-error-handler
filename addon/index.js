@@ -21,16 +21,25 @@ if (DEBUG) {
 
 export default function(label, callback) {
   assert('ember-test-friendly-error-handler requires a label', label);
-  if (!DEBUG) { return callback; }
+  if (!DEBUG) {
+    return callback;
+  }
 
+  let lastReason;
   return function(reason) {
+    if (reason === lastReason) {
+      lastReason = null;
+      return;
+    }
+
+    lastReason = reason;
+
     if (squelchedLabels[label]) {
       return callback(reason);
     }
 
-    return resolve(callback(reason))
-      .then(() => {
-        throw reason;
-      });
+    return resolve(callback(reason)).then(() => {
+      throw reason;
+    });
   };
 }
