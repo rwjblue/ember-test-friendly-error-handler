@@ -27,6 +27,7 @@ export default function(label, callback) {
 
   let lastReason;
   return function(reason) {
+    // avoid reentrance and infinite async loops
     if (reason === lastReason) {
       lastReason = null;
       return;
@@ -34,10 +35,12 @@ export default function(label, callback) {
 
     lastReason = reason;
 
+    // only call the callback when squelched
     if (squelchedLabels[label]) {
       return callback(reason);
     }
 
+    // otherwise call the callback, and rethrow
     return resolve(callback(reason)).then(() => {
       throw reason;
     });
