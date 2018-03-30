@@ -1,7 +1,10 @@
 import { Promise } from 'rsvp';
 import { test, module } from 'qunit';
 import { DEBUG } from '@glimmer/env';
-import buildErrorHandler, { squelchErrorHandlerFor, unsquelchAllErrorHandlers } from 'ember-test-friendly-error-handler';
+import buildErrorHandler, {
+  squelchErrorHandlerFor,
+  unsquelchAllErrorHandlers
+} from 'ember-test-friendly-error-handler';
 
 module('ember-test-friendly-error-handler', function() {
   module('in debug', function(hooks) {
