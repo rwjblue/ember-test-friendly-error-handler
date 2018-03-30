@@ -5,8 +5,36 @@ import buildErrorHandler, {
   squelchErrorHandlerFor,
   unsquelchAllErrorHandlers
 } from 'ember-test-friendly-error-handler';
+import Ember from 'ember';
+import { next } from '@ember/runloop';
 
 module('ember-test-friendly-error-handler', function() {
+  module('in both debug and prod', function(hooks) {
+    hooks.afterEach(() => {
+      Ember.onerror = undefined;
+    });
+
+    test('Ember.onerror does not re-enter', function(assert) {
+      assert.expect(1);
+      let done = assert.async();
+
+      let rejectionReason = {};
+      function handler(reason) {
+        assert.ok(reason === rejectionReason, 'expected rejection reason was passed to callback');
+      }
+
+      Ember.onerror = buildErrorHandler('Ember.onerror', handler);
+
+      next(() => {
+        // throwing in a run-wrapped function will hit the Ember.onerror defined just above
+        throw rejectionReason;
+      });
+
+      // ensure we wait long enough for the run.next to complete
+      setTimeout(done, 10);
+    });
+  });
+
   module('in debug', function(hooks) {
     if (!DEBUG) { return; }
 
