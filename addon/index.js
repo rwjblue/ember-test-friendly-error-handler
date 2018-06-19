@@ -7,6 +7,11 @@ let squelchedLabels;
 export let squelchErrorHandlerFor = null;
 export let unsquelchAllErrorHandlers = null;
 
+const excludeValue = (array, val) => {
+  const pos = array.indexOf(val);
+  return pos !== -1 ? array.slice(0, pos).concat(array.slice(pos + 1, array.length)) : array;
+};
+
 if (DEBUG) {
   squelchedLabels = Object.create(null);
 
@@ -25,15 +30,19 @@ export default function(label, callback) {
     return callback;
   }
 
-  let lastReason;
+  let recentReasons = [];
   return function(reason) {
     // avoid reentrance and infinite async loops
-    if (reason === lastReason) {
-      lastReason = null;
+    const desc = reason.toString();
+    const pos = recentReasons.indexOf(desc);
+    if (pos !== -1) {
+      recentReasons = recentReasons
+        .slice(0, pos)
+        .concat(recentReasons.slice(pos + 1, recentReasons.length));
       return;
     }
 
-    lastReason = reason;
+    recentReasons = recentReasons.concat(desc);
 
     // only call the callback when squelched
     if (squelchedLabels[label]) {
