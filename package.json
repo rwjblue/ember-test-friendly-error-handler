@@ -5,6 +5,10 @@
   "keywords": [
     "ember-addon"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rwjblue/ember-test-friendly-error-handler.git"
+  },
   "license": "MIT",
   "contributors": [
     "Robert Jackson <me@rwjblue.com>",
@@ -14,7 +18,6 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
   "scripts": {
     "build": "ember build",
     "lint:js": "eslint ./*.js addon addon-test-support app config lib server test-support tests",
