@@ -19,14 +19,14 @@ if (DEBUG) {
   };
 }
 
-export default function(label, callback) {
+export default function (label, callback) {
   assert('ember-test-friendly-error-handler requires a label', label);
   if (!DEBUG) {
     return callback;
   }
 
   let lastReason;
-  return function(reason) {
+  return function (reason) {
     // avoid reentrance and infinite async loops
     if (reason === lastReason) {
       lastReason = null;

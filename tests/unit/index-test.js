@@ -3,24 +3,29 @@ import { test, module } from 'qunit';
 import { DEBUG } from '@glimmer/env';
 import buildErrorHandler, {
   squelchErrorHandlerFor,
-  unsquelchAllErrorHandlers
+  unsquelchAllErrorHandlers,
 } from 'ember-test-friendly-error-handler';
 import Ember from 'ember';
 import { next } from '@ember/runloop';
 
-module('ember-test-friendly-error-handler', function() {
-  module('in both debug and prod', function(hooks) {
+module('ember-test-friendly-error-handler', function () {
+  module('in both debug and prod', function (hooks) {
     hooks.afterEach(() => {
       Ember.onerror = undefined;
     });
 
-    test('Ember.onerror does not re-enter', function(assert) {
+    // eslint-disable-next-line
+    test('Ember.onerror does not re-enter', function (assert) {
       assert.expect(1);
       let done = assert.async();
 
       let rejectionReason = {};
       function handler(reason) {
-        assert.ok(reason === rejectionReason, 'expected rejection reason was passed to callback');
+        assert.strictEqual(
+          reason,
+          rejectionReason,
+          'expected rejection reason was passed to callback'
+        );
       }
 
       Ember.onerror = buildErrorHandler('Ember.onerror', handler);
@@ -35,49 +40,70 @@ module('ember-test-friendly-error-handler', function() {
     });
   });
 
-  module('in debug', function(hooks) {
-    if (!DEBUG) { return; }
+  module('in debug', function (hooks) {
+    if (!DEBUG) {
+      return;
+    }
 
     hooks.afterEach(() => {
       unsquelchAllErrorHandlers();
     });
 
-    test('it calls the provided callback and rethrows the rejection', function(assert) {
+    test('it calls the provided callback and rethrows the rejection', function (assert) {
       assert.expect(2);
 
       let rejectionReason = {};
       function handler(reason) {
-        assert.equal(reason, rejectionReason, 'expected rejection reason was passed to callback');
+        assert.strictEqual(
+          reason,
+          rejectionReason,
+          'expected rejection reason was passed to callback'
+        );
       }
 
       return Promise.reject(rejectionReason)
         .catch(buildErrorHandler('label-here', handler))
-        .then(() => { assert.notOk(true, 'should have rejected'); })
-        .catch(reason => {
-          assert.equal(reason, rejectionReason, 'expected rejection reason was thrown');
+        .then(() => {
+          assert.notOk(true, 'should have rejected');
+        })
+        .catch((reason) => {
+          assert.strictEqual(
+            reason,
+            rejectionReason,
+            'expected rejection reason was thrown'
+          );
         });
     });
 
-    test('requires label', function(assert) {
-      assert.throws(() => buildErrorHandler(null, () => {}), /requires a label/);
+    test('requires label', function (assert) {
+      assert.throws(
+        () => buildErrorHandler(null, () => {}),
+        /requires a label/
+      );
     });
 
-    test('squelchErrorHandlerFor allows testing without rethrowing', function(assert) {
+    test('squelchErrorHandlerFor allows testing without rethrowing', function (assert) {
       assert.expect(2);
 
       squelchErrorHandlerFor('some-label-here');
 
       let rejectionReason = {};
       function handler(reason) {
-        assert.equal(reason, rejectionReason, 'expected rejection reason was passed to callback');
+        assert.strictEqual(
+          reason,
+          rejectionReason,
+          'expected rejection reason was passed to callback'
+        );
       }
 
       return Promise.reject(rejectionReason)
         .catch(buildErrorHandler('some-label-here', handler))
-        .then(() => { assert.ok(true, 'does not reject'); });
+        .then(() => {
+          assert.ok(true, 'does not reject');
+        });
     });
 
-    test('squelched handlers can be cleared', function(assert) {
+    test('squelched handlers can be cleared', function (assert) {
       assert.expect(2);
 
       squelchErrorHandlerFor('some-label-here');
@@ -85,31 +111,51 @@ module('ember-test-friendly-error-handler', function() {
 
       let rejectionReason = {};
       function handler(reason) {
-        assert.equal(reason, rejectionReason, 'expected rejection reason was passed to callback');
+        assert.strictEqual(
+          reason,
+          rejectionReason,
+          'expected rejection reason was passed to callback'
+        );
       }
 
       return Promise.reject(rejectionReason)
         .catch(buildErrorHandler('some-label-here', handler))
-        .then(() => { assert.notOk(true, 'should have rejected'); })
-        .catch(reason => {
-          assert.equal(reason, rejectionReason, 'expected rejection reason was thrown');
+        .then(() => {
+          assert.notOk(true, 'should have rejected');
+        })
+        .catch((reason) => {
+          assert.strictEqual(
+            reason,
+            rejectionReason,
+            'expected rejection reason was thrown'
+          );
         });
     });
   });
 
-  module('in prod', function() {
-    if (DEBUG) { return; }
+  module('in prod', function () {
+    if (DEBUG) {
+      return;
+    }
 
-    test('it calls the provided callback', function(assert) {
+    test('it calls the provided callback', function (assert) {
+      assert.expect(1);
       let rejectionReason = {};
       function handler(reason) {
-        assert.equal(reason, rejectionReason, 'expected rejection reason was passed to callback');
+        assert.strictEqual(
+          reason,
+          rejectionReason,
+          'expected rejection reason was passed to callback'
+        );
       }
 
-      return Promise.reject(rejectionReason).catch(buildErrorHandler('some-thing', handler));
+      return Promise.reject(rejectionReason).catch(
+        buildErrorHandler('some-thing', handler)
+      );
     });
 
-    test('handler can decide to throw (who knows why)', function(assert) {
+    test('handler can decide to throw (who knows why)', function (assert) {
+      assert.expect(1);
       let rejectionReason = {};
       function handler() {
         throw rejectionReason;
@@ -118,8 +164,12 @@ module('ember-test-friendly-error-handler', function() {
       return Promise.reject('derp')
         .catch(buildErrorHandler('lol', handler))
         .catch((reason) => {
-          assert.equal(reason, rejectionReason, 'expected rejection reason was thrown');
-        })
+          assert.strictEqual(
+            reason,
+            rejectionReason,
+            'expected rejection reason was thrown'
+          );
+        });
     });
   });
 });
